@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -14,7 +15,7 @@ def signup_user(request):
                 user = User.objects.create_user(request.POST['username'], password=request.POST['password1'])
                 user.save()
                 login(request, user)
-                return redirect('home')
+                return redirect('list')
             except IntegrityError:
                 return render(request, 'authentication/signup.html',
                               {'form': UserCreationForm(),
@@ -30,7 +31,7 @@ def signup_user(request):
 #                 user = User.objects.create_user(request.POST['username'], password=request.POST['password1'])
 #                 user.save()
 #                 login(request, user)
-#                 return redirect('home')
+#                 return redirect('list')
 #             except IntegrityError:
 #                 error = 'User already exists. Please choose a new username'
 #         else:
@@ -49,18 +50,19 @@ def login_user(request):
                            'error': 'User or password did not match'})
         else:
             login(request, user)
-            return redirect('home')
+            return redirect('list')
 # def login_user(request):
 #     error = ''
 #     if request.method == 'POST':
 #         user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
 #         if user:
 #             login(request, user)
-#             return redirect('home')
+#             return redirect('list')
 #         error = 'User or password did not match'
 #     return render(request, 'authentication/login.html', {'form': AuthenticationForm(), 'error': error})
 
 
+@login_required
 def logout_user(request):
     if request.method == 'POST':
         logout(request)
